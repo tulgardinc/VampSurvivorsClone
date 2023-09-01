@@ -1,6 +1,7 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public partial struct EnemyMovement : ISystem
 
     public void OnCreate (ref SystemState state)
     {
-        query = state.GetEntityQuery(ComponentType.ReadWrite<LocalTransform>(), ComponentType.ReadOnly<Speed>(), ComponentType.ReadOnly<EnemyTag>());
+        query = state.GetEntityQuery(ComponentType.ReadWrite<LocalTransform>(), ComponentType.ReadOnly<Speed>(), ComponentType.ReadWrite<PhysicsVelocity>(), ComponentType.ReadOnly<EnemyTag>());
     }
 
     [BurstCompile]
@@ -25,7 +26,7 @@ public partial struct EnemyMovement : ISystem
         new EnemyChaseJob
         {
             playerPosition = playerPos,
-            deltaTime = Time.deltaTime
+            deltaTime = Time.fixedDeltaTime
         }.ScheduleParallel(query);
     }
 
@@ -36,10 +37,11 @@ public partial struct EnemyMovement : ISystem
         public float3 playerPosition;
         public float deltaTime;
 
-        void Execute (ref LocalTransform localTransform, ref Speed speed)
+        void Execute (ref LocalTransform localTransform, ref Speed speed, ref PhysicsVelocity physicsVelocity)
         {
             float3 movementDirection = math.normalize(playerPosition - localTransform.Position);
-            localTransform.Position += movementDirection * speed.speed * deltaTime;
+            float3 velocity = movementDirection * speed.speed * deltaTime;
+            physicsVelocity.Linear = velocity;
         }
     }
 }
