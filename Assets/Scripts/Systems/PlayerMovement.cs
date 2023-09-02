@@ -6,13 +6,15 @@ using UnityEngine;
 
 public partial struct PlayerMovement : ISystem
 {
+
     [BurstCompile]
-    public void OnUpdate (ref SystemState state)
+    public void OnUpdate(ref SystemState state)
     {
-        foreach (var (localTransform, speed, direction, _) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<Speed>, RefRW<Direction>, RefRO<PlayerTag>>())
+        foreach (var (localTransform, speed, direction, _) in SystemAPI
+                         .Query<RefRW<LocalTransform>, RefRO<Speed>, RefRW<Direction>, RefRO<PlayerTag>>())
         {
-            float3 movement = new float3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
-            float3 dir = math.normalizesafe(movement);
+            var movement = new float3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
+            var dir = math.normalizesafe(movement);
 
             if (!dir.Equals(float3.zero))
             {
@@ -25,7 +27,6 @@ public partial struct PlayerMovement : ISystem
             }
 
             localTransform.ValueRW.Position += dir * speed.ValueRO.speed * Time.deltaTime;
-
         }
     }
 

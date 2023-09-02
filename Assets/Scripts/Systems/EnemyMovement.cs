@@ -1,45 +1,50 @@
+using System.Runtime.InteropServices;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 
 [RequireMatchingQueriesForUpdate]
+[StructLayout(LayoutKind.Auto)]
 public partial struct EnemyMovement : ISystem
 {
-    EntityQuery query;
+    private EntityQuery query;
 
-    public void OnCreate (ref SystemState state)
+
+    public void OnCreate(ref SystemState state)
     {
-        query = state.GetEntityQuery(ComponentType.ReadWrite<LocalTransform>(), ComponentType.ReadOnly<Speed>(), ComponentType.ReadOnly<EnemyTag>());
+        query = state.GetEntityQuery(ComponentType.ReadWrite<LocalTransform>(), ComponentType.ReadOnly<Speed>(),
+            ComponentType.ReadWrite<PhysicsVelocity>(), ComponentType.ReadOnly<EnemyTag>());
     }
 
     [BurstCompile]
-    public void OnUpdate (ref SystemState state)
+    public void OnUpdate(ref SystemState state)
     {
-        float3 playerPos = float3.zero;
+        var playerPos = float3.zero;
         foreach (var (playerTransform, _) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<PlayerTag>>())
-        {
             playerPos = playerTransform.ValueRO.Position;
-        }
         new EnemyChaseJob
         {
             playerPosition = playerPos,
-            deltaTime = Time.deltaTime
+            deltaTime = Time.fixedDeltaTime
         }.ScheduleParallel(query);
     }
 
 
     [BurstCompile]
-    partial struct EnemyChaseJob : IJobEntity
+    [StructLayout(LayoutKind.Auto)]
+    private partial struct EnemyChaseJob : IJobEntity
     {
         public float3 playerPosition;
         public float deltaTime;
 
-        void Execute (ref LocalTransform localTransform, ref Speed speed)
+        private void Execute(ref LocalTransform localTransform, ref Speed speed, ref PhysicsVelocity physicsVelocity)
         {
-            float3 movementDirection = math.normalize(playerPosition - localTransform.Position);
-            localTransform.Position += movementDirection * speed.speed * deltaTime;
+            var movementDirection = math.normalize(playerPosition - localTransform.Position);
+            var velocity = movementDirection * speed.speed * deltaTime;
+            physicsVelocity.Linear = velocity;
         }
     }
 }

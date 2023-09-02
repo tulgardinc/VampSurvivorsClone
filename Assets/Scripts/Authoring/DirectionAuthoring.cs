@@ -10,8 +10,12 @@ public class DirectionAuthoring : MonoBehaviour
 
 public class BaseBulletBaker : Baker<DirectionAuthoring>
 {
-    public override void Bake (DirectionAuthoring authoring)
+    public override void Bake(DirectionAuthoring authoring)
     {
-        AddComponent(GetEntity(TransformUsageFlags.Dynamic), new Direction { });
+        AddComponent(GetEntity(TransformUsageFlags.Dynamic), new Direction
+        {
+            direction = default,
+            previousDirection = default
+        });
     }
 }
