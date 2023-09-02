@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8885325983162817379}
   - component: {fileID: 2427534012779873530}
   - component: {fileID: 5591411280167582753}
+  - component: {fileID: 8438693469654938870}
   m_Layer: 0
   m_Name: TestBullet
   m_TagString: Untagged
@@ -276,3 +277,16 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
+--- !u!114 &8438693469654938870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8692323837054728085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb4c0731a46b73a49a789a69756d7a42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 50

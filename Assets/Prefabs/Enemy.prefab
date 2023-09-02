@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6196438214305877904}
   - component: {fileID: 995158572736027676}
   - component: {fileID: 3338309775829398705}
+  - component: {fileID: 4591260005508767311}
+  - component: {fileID: 8038422256016197548}
   - component: {fileID: 4383753463152706288}
   - component: {fileID: 6685375968308375751}
   m_Layer: 0
@@ -113,6 +115,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 250
+--- !u!114 &4591260005508767311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5529849542811886228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 154157aa9bb135b42a13f7d60efbe2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 60
+--- !u!114 &8038422256016197548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5529849542811886228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92e02cbba16a4ab49fd50b522339a800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  experience: 15
 --- !u!114 &4383753463152706288
 MonoBehaviour:
   m_ObjectHideFlags: 0
