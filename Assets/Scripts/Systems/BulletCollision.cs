@@ -6,8 +6,9 @@ using Unity.Physics;
 using Unity.Physics.Systems;
 using UnityEngine;
 
+
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[UpdateBefore(typeof(PhysicsSimulationGroup))]
+[UpdateAfter(typeof(PhysicsSimulationGroup))]
 public partial struct BulletCollision : ISystem
 {
     [BurstCompile]
@@ -25,17 +26,19 @@ public partial struct BulletCollision : ISystem
             bulletLookup = SystemAPI.GetComponentLookup<BulletTag>(true),
             damageLookup = SystemAPI.GetComponentLookup<Damage>(true),
             enemyLookup = SystemAPI.GetComponentLookup<EnemyTag>(true),
+            inCollisionWithLookup = SystemAPI.GetBufferLookup<InCollisionWith>(),
             commandBuffer = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged)
         }.Schedule(
             SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
     }
 
-    [BurstCompile]
     private struct BulletCollisionJob : ITriggerEventsJob
     {
         [ReadOnly] public ComponentLookup<BulletTag> bulletLookup;
         [ReadOnly] public ComponentLookup<EnemyTag> enemyLookup;
         [ReadOnly] public ComponentLookup<Damage> damageLookup;
+
+        public BufferLookup<InCollisionWith> inCollisionWithLookup;
 
         public EntityCommandBuffer commandBuffer;
 
@@ -52,10 +55,27 @@ public partial struct BulletCollision : ISystem
             {
                 float bulletDamage = GetDamage(bullet).ValueRO.damage;
 
-                commandBuffer.AddComponent(enemy, new BulletHit
+                DynamicBuffer<InCollisionWith> inCollisionWith;
+                inCollisionWithLookup.TryGetBuffer(bullet, out inCollisionWith);
+
+                bool isUnique = true;
+                foreach (var entity in inCollisionWith)
                 {
-                    damage = bulletDamage
-                });
+                    if (entity.Value.Equals(enemy))
+                    {
+                        isUnique = false;
+                        break;
+                    }
+                }
+
+                if (isUnique)
+                {
+                    inCollisionWith.Add(enemy);
+                    commandBuffer.AddComponent(enemy, new BulletHit
+                    {
+                        damage = bulletDamage
+                    });
+                }
             }
         }
     }

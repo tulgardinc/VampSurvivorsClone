@@ -8,8 +8,10 @@ public class BulletTagAuthoring : MonoBehaviour
 
 public class BulletTagBaker : Baker<BulletTagAuthoring>
 {
-    public override void Bake (BulletTagAuthoring authoring)
+    public override void Bake(BulletTagAuthoring authoring)
     {
-        AddComponent(this.GetEntity(TransformUsageFlags.Dynamic), new BulletTag { });
+        var entity = GetEntity(TransformUsageFlags.Dynamic);
+        AddComponent(entity, new BulletTag { });
+        AddBuffer<InCollisionWith>(entity);
     }
 }
