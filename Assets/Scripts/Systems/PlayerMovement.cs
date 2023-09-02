@@ -8,15 +8,15 @@ public partial struct PlayerMovement : ISystem
 {
 
     [BurstCompile]
-    public void OnUpdate (ref SystemState state)
+    public void OnUpdate(ref SystemState state)
     {
         foreach (var (localTransform, speed, direction, _) in SystemAPI
-                         .Query <RefRW <LocalTransform>, RefRO <Speed>, RefRW <Direction>, RefRO <PlayerTag>> ())
+                         .Query<RefRW<LocalTransform>, RefRO<Speed>, RefRW<Direction>, RefRO<PlayerTag>>())
         {
-            var movement = new float3 (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw ("Vertical"), 0);
-            var dir = math.normalizesafe (movement);
+            var movement = new float3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
+            var dir = math.normalizesafe(movement);
 
-            if (!dir.Equals (float3.zero))
+            if (!dir.Equals(float3.zero))
             {
                 direction.ValueRW.previousDirection = direction.ValueRO.direction;
                 direction.ValueRW.direction = dir;
