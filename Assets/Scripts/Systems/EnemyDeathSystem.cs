@@ -13,7 +13,7 @@ public partial struct EnemyDeath : ISystem
         var ecb = new EntityCommandBuffer(Allocator.TempJob);
         var entityExperienceOrbLookup = SystemAPI.GetComponentLookup<ExperienceOrbDropperData>(true);
 
-        foreach (var experienceOrbs in SystemAPI.Query<RefRW<OrbSpawnerPrefabs>>())
+        foreach (var experienceOrbs in SystemAPI.Query<RefRW<OrbSpawner>>())
         {
             foreach (var (enemyHealth, enemyPosition, enemy) in SystemAPI
                                                                 .Query<RefRO<Health>, RefRO<LocalTransform>>()
@@ -45,7 +45,14 @@ public partial struct EnemyDeath : ISystem
 
                         //Move small xp orb to position
                         ecb.SetComponent(orb,
-                                         LocalTransform.FromPosition(enemyPosition.ValueRO.Position + orbDirection));
+                                         LocalTransform.FromPosition(enemyPosition.ValueRO.Position));
+                        ecb.AddComponent(orb,
+                            new XPOrbHasStartMotion
+                            {
+                                currentSpeed = experienceOrbs.ValueRO.orbSpawnInitialSpeed,
+                                direction = orbDirection
+                            }
+                        );
                     }
                 }
 

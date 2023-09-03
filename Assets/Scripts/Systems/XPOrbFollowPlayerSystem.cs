@@ -40,7 +40,7 @@ public partial struct XPOrbFollowPlayerSystem : ISystem
             new XPOrbChaseJob
             {
                 playerPosition = playerTransform.ValueRO.Position,
-                deltaTime = Time.fixedDeltaTime
+                deltaTime = Time.deltaTime
             }.ScheduleParallel(queryFollow);
         }
     }

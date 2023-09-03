@@ -47,3 +47,5 @@ MonoBehaviour:
   highXpOrbPrefab: {fileID: 4758238460054323887, guid: fbebc4f94e5534a4dbc5452f6d8c725d, type: 3}
   lowXpOrbPrefab: {fileID: 4758238460054323887, guid: 263856a2bfc2ac645b151b6d69303a94, type: 3}
   mediumXpOrbPrefab: {fileID: 4758238460054323887, guid: 058acaaef57b65f479f88af26f3e89d0, type: 3}
+  orbSpawnInitialSpeed: 15
+  orbSpawnDeceleration: 60
