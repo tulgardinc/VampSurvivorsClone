@@ -245,14 +245,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 651224023461119267, guid: bbb68a9891b1a1d429d7797d00b03080, type: 3}
-      propertyPath: orbSpawnDeceleration
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 651224023461119267, guid: bbb68a9891b1a1d429d7797d00b03080, type: 3}
-      propertyPath: orbSpawnInitialSpeed
-      value: 15
-      objectReference: {fileID: 0}
     - target: {fileID: 1596210682793769431, guid: bbb68a9891b1a1d429d7797d00b03080, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.58362967
