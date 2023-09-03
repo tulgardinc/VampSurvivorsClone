@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 2427534012779873530}
   - component: {fileID: 5591411280167582753}
   - component: {fileID: 8438693469654938870}
+  - component: {fileID: -5788672586807710631}
+  - component: {fileID: 4381688079118990249}
   m_Layer: 0
   m_Name: TestBullet
   m_TagString: Untagged
@@ -113,7 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd60a228f47f2a4489586d98d794dc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 15
+  speed: 35
 --- !u!114 &2427534012779873530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -290,3 +292,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 50
+--- !u!114 &-5788672586807710631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8692323837054728085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e160d8557618cde4d9ab187791163a08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  knockbackAmount: 500
+--- !u!114 &4381688079118990249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8692323837054728085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05d65b171d06c404280ba0865053f22d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalLifeTime: 5
