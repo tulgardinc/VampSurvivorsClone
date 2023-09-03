@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 9210578856377839941}
   - component: {fileID: 3519854761745914009}
   - component: {fileID: 8531210084546872075}
+  - component: {fileID: -7513549093613280743}
   - component: {fileID: 4797375590042763545}
   - component: {fileID: 5873256152033377737}
   m_Layer: 0
@@ -104,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd60a228f47f2a4489586d98d794dc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 7
 --- !u!114 &5662770394097694303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d833407a50ddb6044aac72bc00269b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireInterval: 2
+  fireInterval: 0.5
   fireTimer: 0
   direction:
     x: 0
@@ -185,6 +186,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
+--- !u!114 &-7513549093613280743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7372843516313386568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1a55167ec94f7f40973f721a4a4b498, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pickupRange: 3
 --- !u!114 &4797375590042763545
 MonoBehaviour:
   m_ObjectHideFlags: 0

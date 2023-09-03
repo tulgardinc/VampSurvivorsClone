@@ -3,7 +3,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Random = UnityEngine.Random;
 
 public partial struct EnemyDeath : ISystem
 {
@@ -12,12 +11,12 @@ public partial struct EnemyDeath : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var ecb = new EntityCommandBuffer(Allocator.TempJob);
-        var entityExperienceOrbLookup = SystemAPI.GetComponentLookup <ExperienceOrbDropperData>(true);
+        var entityExperienceOrbLookup = SystemAPI.GetComponentLookup<ExperienceOrbDropperData>(true);
 
-        foreach (var experienceOrbs in SystemAPI.Query <RefRO <OrbSpawnerPrefabs>>())
+        foreach (var experienceOrbs in SystemAPI.Query<RefRW<OrbSpawnerPrefabs>>())
         {
             foreach (var (enemyHealth, enemyPosition, enemy) in SystemAPI
-                                                                .Query <RefRO <Health>, RefRO <LocalTransform>>()
+                                                                .Query<RefRO<Health>, RefRO<LocalTransform>>()
                                                                 .WithEntityAccess())
             {
                 //Guard close for enemy health
@@ -37,7 +36,7 @@ public partial struct EnemyDeath : ISystem
                     for (var i = 0; i < experienceOrbData.lowXpAmount; i++)
                     {
                         //Orb spawn range calculation
-                        var orbPosition = new float3(Random.Range(-1f, 1f), Random.Range(-1f, 1f)
+                        var orbPosition = new float3(experienceOrbs.ValueRW.random.NextFloat(-1, 1), experienceOrbs.ValueRW.random.NextFloat(-1, 1)
                                                      , 0);
                         var orbDirection = math.normalize(orbPosition);
 

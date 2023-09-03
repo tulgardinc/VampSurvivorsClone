@@ -15,8 +15,17 @@ public class EnemySpawnerAuthoring : MonoBehaviour
 
 public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
 {
-    public override void Bake (EnemySpawnerAuthoring authoring)
+    public override void Bake(EnemySpawnerAuthoring authoring)
     {
-        AddComponent(this.GetEntity(TransformUsageFlags.None), new EnemySpawner { spawnRate = authoring.spawnRate, radius = authoring.radius, nextSpawnTime = 0, random = Unity.Mathematics.Random.CreateFromIndex(18123), enemyPrefab = this.GetEntity(authoring.enemyPrefab, TransformUsageFlags.Dynamic) });
+        AddComponent(GetEntity(TransformUsageFlags.None),
+            new EnemySpawner
+            {
+                spawnRate = authoring.spawnRate,
+                radius = authoring.radius,
+                nextSpawnTime = 0,
+                random = Unity.Mathematics.Random.CreateFromIndex((uint)Random.Range(0, 9999)),
+                enemyPrefab = this.GetEntity(authoring.enemyPrefab,
+                TransformUsageFlags.Dynamic)
+            });
     }
 }

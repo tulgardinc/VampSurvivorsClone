@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8765796768368479894}
   - component: {fileID: 6672493976271293630}
   - component: {fileID: 696728776106818921}
+  - component: {fileID: 5784707304668907709}
   m_Layer: 0
   m_Name: LowExperienceOrb
   m_TagString: Untagged
@@ -242,3 +243,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   experience: 3
+--- !u!114 &5784707304668907709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4758238460054323887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dd60a228f47f2a4489586d98d794dc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 200

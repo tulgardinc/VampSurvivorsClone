@@ -8,7 +8,7 @@ public class OrbSpawnerPrefabsAuthoring : MonoBehaviour
     public GameObject lowXpOrbPrefab;
     public GameObject mediumXpOrbPrefab;
 
-    public class OrbSpawnerPrefabsBaker : Baker <OrbSpawnerPrefabsAuthoring>
+    public class OrbSpawnerPrefabsBaker : Baker<OrbSpawnerPrefabsAuthoring>
     {
 
         public override void Bake(OrbSpawnerPrefabsAuthoring authoring)
@@ -22,7 +22,8 @@ public class OrbSpawnerPrefabsAuthoring : MonoBehaviour
                              lowXpOrbPrefab =
                                      GetEntity(authoring.lowXpOrbPrefab, TransformUsageFlags.Dynamic),
                              mediumXpOrbPrefab =
-                                     GetEntity(authoring.mediumXpOrbPrefab, TransformUsageFlags.Dynamic)
+                                     GetEntity(authoring.mediumXpOrbPrefab, TransformUsageFlags.Dynamic),
+                             random = Unity.Mathematics.Random.CreateFromIndex((uint)Random.Range(0, 9999))
                          });
         }
 
