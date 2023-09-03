@@ -22,6 +22,7 @@ public partial struct BulletCollision : ISystem
             bulletLookup = SystemAPI.GetComponentLookup <BulletTag>(true),
             damageLookup = SystemAPI.GetComponentLookup <Damage>(true),
             enemyLookup = SystemAPI.GetComponentLookup <EnemyTag>(true),
+            knockbackLookup = SystemAPI.GetComponentLookup <KnockbackData>(true),
             inCollisionWithLookup = SystemAPI.GetBufferLookup <InCollisionWith>(),
             commandBuffer = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>()
                                      .CreateCommandBuffer(state.WorldUnmanaged)
@@ -35,16 +36,11 @@ public partial struct BulletCollision : ISystem
         [ReadOnly] public ComponentLookup <BulletTag> bulletLookup;
         [ReadOnly] public ComponentLookup <EnemyTag> enemyLookup;
         [ReadOnly] public ComponentLookup <Damage> damageLookup;
+        [ReadOnly] public ComponentLookup <KnockbackData> knockbackLookup;
 
         public BufferLookup <InCollisionWith> inCollisionWithLookup;
 
         public EntityCommandBuffer commandBuffer;
-
-        private bool IsBullet(Entity entity) { return bulletLookup.HasComponent(entity); }
-
-        private bool IsEnemy(Entity entity) { return enemyLookup.HasComponent(entity); }
-
-        private RefRO <Damage> GetDamage(Entity entity) { return damageLookup.GetRefRO(entity); }
 
         public void Execute(TriggerEvent triggerEvent)
         {
@@ -54,6 +50,7 @@ public partial struct BulletCollision : ISystem
             if (IsEnemy(enemy) && IsBullet(bullet))
             {
                 var bulletDamage = GetDamage(bullet).ValueRO.damage;
+                var bulletKnockback = GetKnockback(bullet).ValueRO.knockbackAmount;
 
                 inCollisionWithLookup.TryGetBuffer(bullet, out var inCollisionWith);
 
@@ -75,9 +72,21 @@ public partial struct BulletCollision : ISystem
                     {
                         damage = bulletDamage
                     });
+                    commandBuffer.AddComponent(enemy, new WillBeKnockedBack
+                    {
+                        totalKnockbackAmount = bulletKnockback
+                    });
                 }
             }
         }
+
+        private bool IsBullet(Entity entity) { return bulletLookup.HasComponent(entity); }
+
+        private bool IsEnemy(Entity entity) { return enemyLookup.HasComponent(entity); }
+
+        private RefRO <Damage> GetDamage(Entity entity) { return damageLookup.GetRefRO(entity); }
+
+        private RefRO <KnockbackData> GetKnockback(Entity entity) { return knockbackLookup.GetRefRO(entity); }
 
     }
 
