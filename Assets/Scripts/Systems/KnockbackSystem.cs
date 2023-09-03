@@ -1,8 +1,6 @@
 using System.Runtime.InteropServices;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.Physics;
-using Unity.Transforms;
 using UnityEngine;
 
 [StructLayout(LayoutKind.Auto)]
@@ -14,54 +12,50 @@ public partial struct KnockbackSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate <EndSimulationEntityCommandBufferSystem.Singleton>();
-        queryKnockback = state.GetEntityQuery(ComponentType.ReadWrite <LocalTransform>(),
-                                              ComponentType.ReadWrite <PhysicsVelocity>(),
+        queryKnockback = state.GetEntityQuery(ComponentType.ReadWrite <PhysicsVelocity>(),
                                               ComponentType.ReadWrite <WillBeKnockedBack>(),
-                                              ComponentType.ReadOnly <EnemyTag>());
+                                              ComponentType.ReadOnly <Speed>());
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (playerTransform, _) in SystemAPI
-                         .Query <RefRW <LocalTransform>, RefRO <PlayerTag>>())
+        var ecbSystem = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
+        var parallelEcb = ecb.AsParallelWriter();
+
+
+        state.Dependency = new KnockbackJob
         {
-            var ecbSystem = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>();
-            var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
-            var parallelEcb = ecb.AsParallelWriter();
-
-
-            state.Dependency = new KnockbackJob
-            {
-                playerPosition = playerTransform.ValueRO.Position,
-                fixedDeltaTime = Time.fixedDeltaTime,
-                deltaTime = Time.deltaTime,
-                ecb = parallelEcb
-            }.ScheduleParallel(queryKnockback, state.Dependency);
-        }
+            fixedDeltaTime = Time.fixedDeltaTime,
+            deltaTime = Time.deltaTime,
+            ecb = parallelEcb
+        }.ScheduleParallel(queryKnockback, state.Dependency);
     }
 
     [StructLayout(LayoutKind.Auto)]
     public partial struct KnockbackJob : IJobEntity
     {
 
-        public float3 playerPosition;
         public float fixedDeltaTime;
         public float deltaTime;
         public EntityCommandBuffer.ParallelWriter ecb;
 
-        private void Execute(ref LocalTransform enemyPosition, ref WillBeKnockedBack knockbackAmount,
-                             ref PhysicsVelocity enemyPhysics, [ChunkIndexInQuery] int sortKey, Entity enemy)
+        private void Execute(ref WillBeKnockedBack knockbackInfo,
+                             ref PhysicsVelocity enemyPhysics,
+                             ref Speed enemySpeed,
+                             [ChunkIndexInQuery] int sortKey,
+                             Entity enemy)
         {
-            var knockbackDirection = math.normalizesafe(enemyPosition.Position - playerPosition);
-            var knockbackMagnitude = knockbackDirection * knockbackAmount.totalKnockbackAmount;
+            var knockbackDirection = knockbackInfo.knockbackDirection;
+            var knockbackMagnitude = knockbackDirection * knockbackInfo.totalKnockbackAmount;
 
-            var knockbackSlowdown = 100f;
+            var knockbackSlowdown = 2500f;
 
             enemyPhysics.Linear = knockbackMagnitude * fixedDeltaTime;
 
-            if (knockbackAmount.totalKnockbackAmount > 0)
+            if (knockbackInfo.totalKnockbackAmount > enemySpeed.speed * 40 / 100)
             {
-                knockbackAmount.totalKnockbackAmount -= knockbackSlowdown * deltaTime;
+                knockbackInfo.totalKnockbackAmount -= knockbackSlowdown * deltaTime;
             }
             else
             {

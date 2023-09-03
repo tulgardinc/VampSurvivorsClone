@@ -1,7 +1,9 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Physics;
+using Unity.Transforms;
 
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 public partial struct BulletCollision : ISystem
@@ -10,6 +12,7 @@ public partial struct BulletCollision : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate <PlayerTag>();
         state.RequireForUpdate <SimulationSingleton>();
         state.RequireForUpdate <EndSimulationEntityCommandBufferSystem.Singleton>();
     }
@@ -17,12 +20,16 @@ public partial struct BulletCollision : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        var playerTransform = SystemAPI.GetComponent <LocalTransform>(SystemAPI.GetSingletonEntity <PlayerTag>());
+
         state.Dependency = new BulletCollisionJob
         {
             bulletLookup = SystemAPI.GetComponentLookup <BulletTag>(true),
             damageLookup = SystemAPI.GetComponentLookup <Damage>(true),
             enemyLookup = SystemAPI.GetComponentLookup <EnemyTag>(true),
             knockbackLookup = SystemAPI.GetComponentLookup <KnockbackData>(true),
+            transformLookup = SystemAPI.GetComponentLookup <LocalTransform>(true),
+            playerTransform = playerTransform,
             inCollisionWithLookup = SystemAPI.GetBufferLookup <InCollisionWith>(),
             commandBuffer = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>()
                                      .CreateCommandBuffer(state.WorldUnmanaged)
@@ -37,6 +44,8 @@ public partial struct BulletCollision : ISystem
         [ReadOnly] public ComponentLookup <EnemyTag> enemyLookup;
         [ReadOnly] public ComponentLookup <Damage> damageLookup;
         [ReadOnly] public ComponentLookup <KnockbackData> knockbackLookup;
+        [ReadOnly] public ComponentLookup <LocalTransform> transformLookup;
+        public LocalTransform playerTransform;
 
         public BufferLookup <InCollisionWith> inCollisionWithLookup;
 
@@ -74,7 +83,9 @@ public partial struct BulletCollision : ISystem
                     });
                     commandBuffer.AddComponent(enemy, new WillBeKnockedBack
                     {
-                        totalKnockbackAmount = bulletKnockback
+                        totalKnockbackAmount = bulletKnockback,
+                        knockbackDirection =
+                                math.normalizesafe(GetTransform(enemy).ValueRO.Position - playerTransform.Position)
                     });
                 }
             }
@@ -87,6 +98,8 @@ public partial struct BulletCollision : ISystem
         private RefRO <Damage> GetDamage(Entity entity) { return damageLookup.GetRefRO(entity); }
 
         private RefRO <KnockbackData> GetKnockback(Entity entity) { return knockbackLookup.GetRefRO(entity); }
+
+        private RefRO <LocalTransform> GetTransform(Entity entity) { return transformLookup.GetRefRO(entity); }
 
     }
 
