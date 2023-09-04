@@ -9,6 +9,8 @@ public class OrbSpawnerAuthoring : MonoBehaviour
     public GameObject mediumXpOrbPrefab;
     public float orbSpawnInitialSpeed;
     public float orbSpawnDeceleration;
+    public float maxSpeed;
+    public float acceleration;
 
     public class OrbSpawnerPrefabsBaker : Baker<OrbSpawnerAuthoring>
     {
@@ -27,7 +29,9 @@ public class OrbSpawnerAuthoring : MonoBehaviour
                                      GetEntity(authoring.mediumXpOrbPrefab, TransformUsageFlags.Dynamic),
                              random = Unity.Mathematics.Random.CreateFromIndex((uint)Random.Range(0, 9999)),
                              orbSpawnInitialSpeed = authoring.orbSpawnInitialSpeed,
-                             orbSpawnDeceleration = authoring.orbSpawnDeceleration
+                             acceleration = authoring.acceleration,
+                             orbSpawnDeceleration = authoring.orbSpawnDeceleration,
+                             maxSpeed = authoring.maxSpeed
                          });
         }
 

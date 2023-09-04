@@ -12,42 +12,42 @@ public partial struct BulletCollision : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate <PlayerTag>();
-        state.RequireForUpdate <SimulationSingleton>();
-        state.RequireForUpdate <EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<PlayerTag>();
+        state.RequireForUpdate<SimulationSingleton>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var playerTransform = SystemAPI.GetComponent <LocalTransform>(SystemAPI.GetSingletonEntity <PlayerTag>());
+        var playerTransform = SystemAPI.GetComponent<LocalTransform>(SystemAPI.GetSingletonEntity<PlayerTag>());
 
         state.Dependency = new BulletCollisionJob
         {
-            bulletLookup = SystemAPI.GetComponentLookup <BulletTag>(true),
-            damageLookup = SystemAPI.GetComponentLookup <Damage>(true),
-            enemyLookup = SystemAPI.GetComponentLookup <EnemyTag>(true),
-            knockbackLookup = SystemAPI.GetComponentLookup <KnockbackData>(true),
-            transformLookup = SystemAPI.GetComponentLookup <LocalTransform>(true),
+            bulletLookup = SystemAPI.GetComponentLookup<BulletTag>(true),
+            damageLookup = SystemAPI.GetComponentLookup<Damage>(true),
+            enemyLookup = SystemAPI.GetComponentLookup<EnemyTag>(true),
+            knockbackLookup = SystemAPI.GetComponentLookup<KnockbackData>(true),
+            transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true),
             playerTransform = playerTransform,
-            inCollisionWithLookup = SystemAPI.GetBufferLookup <InCollisionWith>(),
-            commandBuffer = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>()
+            inCollisionWithLookup = SystemAPI.GetBufferLookup<InCollisionWith>(),
+            commandBuffer = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                                      .CreateCommandBuffer(state.WorldUnmanaged)
         }.Schedule(
-                   SystemAPI.GetSingleton <SimulationSingleton>(), state.Dependency);
+                   SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
     }
 
     private struct BulletCollisionJob : ITriggerEventsJob
     {
 
-        [ReadOnly] public ComponentLookup <BulletTag> bulletLookup;
-        [ReadOnly] public ComponentLookup <EnemyTag> enemyLookup;
-        [ReadOnly] public ComponentLookup <Damage> damageLookup;
-        [ReadOnly] public ComponentLookup <KnockbackData> knockbackLookup;
-        [ReadOnly] public ComponentLookup <LocalTransform> transformLookup;
+        [ReadOnly] public ComponentLookup<BulletTag> bulletLookup;
+        [ReadOnly] public ComponentLookup<EnemyTag> enemyLookup;
+        [ReadOnly] public ComponentLookup<Damage> damageLookup;
+        [ReadOnly] public ComponentLookup<KnockbackData> knockbackLookup;
+        [ReadOnly] public ComponentLookup<LocalTransform> transformLookup;
         public LocalTransform playerTransform;
 
-        public BufferLookup <InCollisionWith> inCollisionWithLookup;
+        public BufferLookup<InCollisionWith> inCollisionWithLookup;
 
         public EntityCommandBuffer commandBuffer;
 
@@ -104,6 +104,7 @@ public partial struct BulletCollision : ISystem
                     knockbackDirection =
                             math.normalizesafe(GetTransform(enemy).ValueRO.Position - playerTransform.Position)
                 });
+                commandBuffer.AddComponent(enemy, new DamageFlashing { });
             }
         }
 
@@ -111,11 +112,11 @@ public partial struct BulletCollision : ISystem
 
         private bool IsEnemy(Entity entity) { return enemyLookup.HasComponent(entity); }
 
-        private RefRO <Damage> GetDamage(Entity entity) { return damageLookup.GetRefRO(entity); }
+        private RefRO<Damage> GetDamage(Entity entity) { return damageLookup.GetRefRO(entity); }
 
-        private RefRO <KnockbackData> GetKnockback(Entity entity) { return knockbackLookup.GetRefRO(entity); }
+        private RefRO<KnockbackData> GetKnockback(Entity entity) { return knockbackLookup.GetRefRO(entity); }
 
-        private RefRO <LocalTransform> GetTransform(Entity entity) { return transformLookup.GetRefRO(entity); }
+        private RefRO<LocalTransform> GetTransform(Entity entity) { return transformLookup.GetRefRO(entity); }
 
     }
 

@@ -6,12 +6,17 @@ using Unity.Transforms;
 public partial struct EnemySpawnSystem : ISystem
 {
     [BurstCompile]
-    public void OnUpdate (ref SystemState state)
+    public void OnUpdate(ref SystemState state)
     {
         foreach (var (playerTransform, _) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<PlayerTag>>())
         {
             foreach (var spawner in SystemAPI.Query<RefRW<EnemySpawner>>())
             {
+                if (!spawner.ValueRO.isEnabled)
+                {
+                    return;
+                }
+
                 if (spawner.ValueRO.nextSpawnTime < SystemAPI.Time.ElapsedTime)
                 {
                     Entity enemy = state.EntityManager.Instantiate(spawner.ValueRO.enemyPrefab);

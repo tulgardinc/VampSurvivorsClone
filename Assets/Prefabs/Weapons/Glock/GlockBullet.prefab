@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -5788672586807710631}
   - component: {fileID: 4381688079118990249}
   m_Layer: 0
-  m_Name: TestBullet
+  m_Name: GlockBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

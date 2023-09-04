@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 741200691849089358}
   - component: {fileID: 7579774616101976905}
   - component: {fileID: 4383753463152706288}
-  - component: {fileID: 6685375968308375751}
+  - component: {fileID: 5544298691655287229}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -34,8 +34,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.7019389, y: 1.848237, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 9.46, y: 9.46, z: 9.46}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -59,7 +59,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: aceeb391ac9ca4141a669c49d50cf1d1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -80,8 +80,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: eb03ab219a8c0bf4f84bac4526b88706, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd60a228f47f2a4489586d98d794dc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 250
+  speed: 200
 --- !u!114 &4591260005508767311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 154157aa9bb135b42a13f7d60efbe2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 75
+  health: 100
 --- !u!114 &741200691849089358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,9 +176,9 @@ MonoBehaviour:
     y: 0
     z: 0
   m_PrimitiveSize:
-    x: 1
-    y: 1
-    z: 1
+    x: 0.18
+    y: 0.18
+    z: 0.18
   m_PrimitiveOrientation:
     Value:
       x: 0
@@ -186,15 +186,15 @@ MonoBehaviour:
       z: 0
     RotationOrder: 4
   m_Capsule:
-    Height: 1
-    Radius: 0.5
+    Height: 0.18
+    Radius: 0.09
     Axis: 2
   m_Cylinder:
-    Height: 1
-    Radius: 0.5
+    Height: 0.18
+    Radius: 0.09
     Axis: 2
   m_CylinderSideCount: 20
-  m_SphereRadius: 0.5
+  m_SphereRadius: 0.09
   m_MinimumSkinnedVertexWeight: 0.1
   m_ConvexHullGenerationParameters:
     m_SimplificationTolerance: 0.015
@@ -301,7 +301,7 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &6685375968308375751
+--- !u!114 &5544298691655287229
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -327,7 +327,7 @@ MonoBehaviour:
     y: 0
     z: 0
   m_GravityFactor: 0
-  m_OverrideDefaultMassDistribution: 0
+  m_OverrideDefaultMassDistribution: 1
   m_CenterOfMass:
     x: 0
     y: 0
@@ -339,9 +339,9 @@ MonoBehaviour:
       z: 0
     RotationOrder: 4
   m_InertiaTensor:
-    x: 0.4
-    y: 0.4
-    z: 0.4
+    x: Infinity
+    y: Infinity
+    z: Infinity
   m_WorldIndex: 0
   m_CustomTags:
     Tag00: 0

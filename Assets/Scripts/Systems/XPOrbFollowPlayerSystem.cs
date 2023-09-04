@@ -13,19 +13,23 @@ public partial struct XPOrbFollowPlayerSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        queryFollow = state.GetEntityQuery(ComponentType.ReadWrite <LocalTransform>(), ComponentType.ReadOnly <Speed>(),
-                                           ComponentType.ReadWrite <OrbFollowingPlayer>());
-        queryAddComponent = state.GetEntityQuery(ComponentType.ReadOnly <LocalTransform>(),
-                                                 ComponentType.ReadOnly <Experience>(),
-                                                 ComponentType.Exclude <OrbFollowingPlayer>());
-        state.RequireForUpdate <EndSimulationEntityCommandBufferSystem.Singleton>();
+        queryFollow = state.GetEntityQuery(ComponentType.ReadWrite<LocalTransform>(), ComponentType.ReadWrite<OrbFollowingPlayer>());
+
+        queryAddComponent = state.GetEntityQuery(ComponentType.ReadOnly<LocalTransform>(),
+                                                 ComponentType.ReadOnly<Experience>(),
+                                                 ComponentType.Exclude<OrbFollowingPlayer>());
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (playerTransform, canPickupXP) in SystemAPI.Query <RefRO <LocalTransform>, RefRO <CanPickupXP>>())
+        var orbSpawnerData = SystemAPI.GetSingleton<OrbSpawner>();
+        float maxSpeed = orbSpawnerData.maxSpeed;
+        float acceleration = orbSpawnerData.acceleration;
+
+        foreach (var (playerTransform, canPickupXP) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<CanPickupXP>>())
         {
-            var ecbSystem = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>();
+            var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
             var parallelEcb = ecb.AsParallelWriter();
 
@@ -39,8 +43,10 @@ public partial struct XPOrbFollowPlayerSystem : ISystem
 
             new XPOrbChaseJob
             {
+                maxSpeed = maxSpeed,
                 playerPosition = playerTransform.ValueRO.Position,
-                deltaTime = Time.deltaTime
+                deltaTime = Time.deltaTime,
+                acceleration = acceleration
             }.ScheduleParallel(queryFollow);
         }
     }
@@ -71,13 +77,16 @@ public partial struct XPOrbFollowPlayerSystem : ISystem
 
         public float3 playerPosition;
         public float deltaTime;
+        public float maxSpeed;
+        public float acceleration;
 
-        private void Execute(ref LocalTransform orbTransform,
-                             ref Speed speed, ref OrbFollowingPlayer orbFollowingPlayer)
+        private void Execute(ref LocalTransform orbTransform, ref OrbFollowingPlayer orbFollowingPlayer)
         {
-            var movementDirection = math.normalize(playerPosition - orbTransform.Position);
-            orbFollowingPlayer.currentSpeed += speed.speed * deltaTime;
-            orbTransform.Position += movementDirection * orbFollowingPlayer.currentSpeed * deltaTime;
+            float3 posDif = playerPosition - orbTransform.Position;
+            float3 movementDirection = math.normalize(posDif);
+            orbFollowingPlayer.currentSpeed += acceleration * deltaTime;
+            float speedToApply = math.clamp(orbFollowingPlayer.currentSpeed * deltaTime, 0, maxSpeed);
+            orbTransform.Position += movementDirection * speedToApply;
         }
 
     }

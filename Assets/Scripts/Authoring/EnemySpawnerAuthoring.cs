@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class EnemySpawnerAuthoring : MonoBehaviour
 {
+    public bool isEnabled;
     public float spawnRate;
     public float radius;
     public GameObject enemyPrefab;
@@ -20,6 +21,7 @@ public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
         AddComponent(GetEntity(TransformUsageFlags.None),
             new EnemySpawner
             {
+                isEnabled = authoring.isEnabled,
                 spawnRate = authoring.spawnRate,
                 radius = authoring.radius,
                 nextSpawnTime = 0,
