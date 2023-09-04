@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d833407a50ddb6044aac72bc00269b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireInterval: 0.5
+  fireInterval: 0.25
   fireTimer: 0
   direction:
     x: 0

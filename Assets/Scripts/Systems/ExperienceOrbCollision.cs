@@ -36,18 +36,33 @@ public partial struct ExperienceOrbCollision : ISystem
 
         public void Execute(TriggerEvent triggerEvent)
         {
-            var player = triggerEvent.EntityA;
-            var experience = triggerEvent.EntityB;
+            var entityA = triggerEvent.EntityA;
+            var entityB = triggerEvent.EntityB;
 
-            if (IsExperience(experience) && IsPlayer(player))
+            Entity experience;
+            Entity player;
+
+            if (IsExperience(entityA) && IsPlayer(entityB))
             {
-                var experienceValue = GetExperience(experience);
-                var playerExperience = GetLevellingData(player);
-
-                playerExperience.ValueRW.currentXP += experienceValue;
-
-                commandBuffer.DestroyEntity(experience);
+                experience = entityA;
+                player = entityB;
             }
+            else if (IsExperience(entityB) && IsPlayer(entityA))
+            {
+                experience = entityB;
+                player = entityA;
+            }
+            else
+            {
+                return;
+            }
+
+            var experienceValue = GetExperience(experience);
+            var playerExperience = GetLevellingData(player);
+
+            playerExperience.ValueRW.currentXP += experienceValue;
+
+            commandBuffer.DestroyEntity(experience);
         }
 
         private bool IsExperience(Entity entity) { return experienceLookup.HasComponent(entity); }

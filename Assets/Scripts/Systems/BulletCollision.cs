@@ -53,41 +53,57 @@ public partial struct BulletCollision : ISystem
 
         public void Execute(TriggerEvent triggerEvent)
         {
-            var enemy = triggerEvent.EntityA;
-            var bullet = triggerEvent.EntityB;
+            var entityA = triggerEvent.EntityA;
+            var entityB = triggerEvent.EntityB;
 
-            if (IsEnemy(enemy) && IsBullet(bullet))
+            Entity enemy;
+            Entity bullet;
+
+            if (IsEnemy(entityA) && IsBullet(entityB))
             {
-                var bulletDamage = GetDamage(bullet).ValueRO.damage;
-                var bulletKnockback = GetKnockback(bullet).ValueRO.knockbackAmount;
+                enemy = entityA;
+                bullet = entityB;
+            }
+            else if (IsEnemy(entityB) && IsBullet(entityA))
+            {
+                enemy = entityB;
+                bullet = entityA;
+            }
+            else
+            {
+                return;
+            }
 
-                inCollisionWithLookup.TryGetBuffer(bullet, out var inCollisionWith);
 
-                var isUnique = true;
-                foreach (var entity in inCollisionWith)
+            var bulletDamage = GetDamage(bullet).ValueRO.damage;
+            var bulletKnockback = GetKnockback(bullet).ValueRO.knockbackAmount;
+
+            inCollisionWithLookup.TryGetBuffer(bullet, out var inCollisionWith);
+
+            var isUnique = true;
+            foreach (var entity in inCollisionWith)
+            {
+                if (entity.Value.Equals(enemy))
                 {
-                    if (entity.Value.Equals(enemy))
-                    {
-                        isUnique = false;
+                    isUnique = false;
 
-                        break;
-                    }
+                    break;
                 }
+            }
 
-                if (isUnique)
+            if (isUnique)
+            {
+                inCollisionWith.Add(enemy);
+                commandBuffer.AddComponent(enemy, new BulletHit
                 {
-                    inCollisionWith.Add(enemy);
-                    commandBuffer.AddComponent(enemy, new BulletHit
-                    {
-                        damage = bulletDamage
-                    });
-                    commandBuffer.AddComponent(enemy, new WillBeKnockedBack
-                    {
-                        totalKnockbackAmount = bulletKnockback,
-                        knockbackDirection =
-                                math.normalizesafe(GetTransform(enemy).ValueRO.Position - playerTransform.Position)
-                    });
-                }
+                    damage = bulletDamage
+                });
+                commandBuffer.AddComponent(enemy, new WillBeKnockedBack
+                {
+                    totalKnockbackAmount = bulletKnockback,
+                    knockbackDirection =
+                            math.normalizesafe(GetTransform(enemy).ValueRO.Position - playerTransform.Position)
+                });
             }
         }
 
