@@ -1,26 +1,33 @@
-
+using System.Runtime.InteropServices;
 using Unity.Entities;
-using Unity.Transforms;
 using UnityEngine;
 
 public partial struct LifeTimeSystem : ISystem
 {
+
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate <EndSimulationEntityCommandBufferSystem.Singleton>();
+    }
+
     public void OnUpdate(ref SystemState state)
     {
-        var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecbSystem = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSystem.CreateCommandBuffer(state.World.Unmanaged);
         var parallelEcb = ecb.AsParallelWriter();
 
         state.Dependency = new LifeTimeJob
         {
             ecb = parallelEcb,
-            timeDelta = Time.deltaTime,
+            timeDelta = Time.deltaTime
         }.ScheduleParallel(state.Dependency);
     }
 
 
+    [StructLayout(LayoutKind.Auto)]
     public partial struct LifeTimeJob : IJobEntity
     {
+
         public EntityCommandBuffer.ParallelWriter ecb;
         public float timeDelta;
 
@@ -35,5 +42,7 @@ public partial struct LifeTimeSystem : ISystem
                 lifeTime.lifeTimeLeft -= timeDelta;
             }
         }
+
     }
+
 }

@@ -1,23 +1,18 @@
-using Unity.Burst;
+using System.Runtime.InteropServices;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
 
 public partial struct DamageFlashingSystem : ISystem
 {
 
-    public void OnStart(ref SystemState state)
-    {
-        state.RequireForUpdate<DamageFlashData>();
-    }
+    public void OnStart(ref SystemState state) { state.RequireForUpdate <DamageFlashData>(); }
 
     public void OnUpdate(ref SystemState state)
     {
+        var damageFlashData = SystemAPI.ManagedAPI.GetSingleton <DamageFlashData>();
 
-        DamageFlashData damageFlashData = SystemAPI.ManagedAPI.GetSingleton<DamageFlashData>();
-
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
         new DamageFlashingJob
         {
@@ -31,6 +26,7 @@ public partial struct DamageFlashingSystem : ISystem
         ecb.Dispose();
     }
 
+    [StructLayout(LayoutKind.Auto)]
     public partial struct DamageFlashingJob : IJobEntity
     {
 
@@ -43,15 +39,19 @@ public partial struct DamageFlashingSystem : ISystem
             if (flashing.flashTimer >= damageFlashData.flashDuration)
             {
                 renderer.material = damageFlashData.defaultMaterial;
-                ecb.RemoveComponent<DamageFlashing>(entity);
+                ecb.RemoveComponent <DamageFlashing>(entity);
+
                 return;
             }
-            else if (!renderer.material.Equals(damageFlashData.flashMaterial))
+
+            if (!renderer.material.Equals(damageFlashData.flashMaterial))
             {
                 renderer.material = damageFlashData.flashMaterial;
             }
+
             flashing.flashTimer += deltaTime;
         }
 
     }
+
 }

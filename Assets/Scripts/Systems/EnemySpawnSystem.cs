@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[StructLayout(LayoutKind.Auto)]
 public partial struct EnemySpawnSystem : ISystem
 {
 
