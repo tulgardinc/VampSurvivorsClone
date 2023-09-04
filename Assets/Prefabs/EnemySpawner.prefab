@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3819775675330064566}
   - component: {fileID: 601301971586878290}
   - component: {fileID: 3639893609331361109}
+  - component: {fileID: 5692060655694622322}
   m_Layer: 0
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -57,9 +58,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9968431af5c11ef4f88a3bddddc341db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnRate: 1
+  isEnabled: 1
+  spawnRate: 0.5
   radius: 15
+  spawnAmount: 2
   enemyPrefab: {fileID: 5529849542811886228, guid: 3dd1832c54f0f0240acc6734cd0291fb, type: 3}
   nextSpawnTime: 0
   random:
     state: 0
+--- !u!114 &5692060655694622322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6785230529069245448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc14c03caa2264a4c8a68320eb500d41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultMaterial: {fileID: 2100000, guid: aceeb391ac9ca4141a669c49d50cf1d1, type: 2}
+  flashMaterial: {fileID: 2100000, guid: c771365b64834f34f89c8d2ad469d94c, type: 2}
+  flashDuration: 0.08

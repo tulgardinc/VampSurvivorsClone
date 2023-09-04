@@ -10,4 +10,6 @@ public struct OrbSpawner : IComponentData
     public Unity.Mathematics.Random random;
     public float orbSpawnInitialSpeed;
     public float orbSpawnDeceleration;
+    public float maxSpeed;
+    public float acceleration;
 }

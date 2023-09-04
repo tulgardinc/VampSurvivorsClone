@@ -104,6 +104,10 @@ public partial struct BulletCollision : ISystem
                     knockbackDirection =
                             math.normalizesafe(GetTransform(enemy).ValueRO.Position - playerTransform.Position)
                 });
+                commandBuffer.AddComponent(enemy, new DamageFlashing
+                {
+                    flashTimer = 0
+                });
             }
         }
 
