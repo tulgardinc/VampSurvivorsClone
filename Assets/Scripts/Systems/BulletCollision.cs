@@ -26,6 +26,7 @@ public partial struct BulletCollision : ISystem
         {
             bulletLookup = SystemAPI.GetComponentLookup <BulletTag>(true),
             damageLookup = SystemAPI.GetComponentLookup <Damage>(true),
+            bulletHealthLookup = SystemAPI.GetComponentLookup <BulletHealth>(),
             enemyLookup = SystemAPI.GetComponentLookup <EnemyTag>(true),
             knockbackLookup = SystemAPI.GetComponentLookup <KnockbackData>(true),
             transformLookup = SystemAPI.GetComponentLookup <LocalTransform>(true),
@@ -45,6 +46,7 @@ public partial struct BulletCollision : ISystem
         [ReadOnly] public ComponentLookup <Damage> damageLookup;
         [ReadOnly] public ComponentLookup <KnockbackData> knockbackLookup;
         [ReadOnly] public ComponentLookup <LocalTransform> transformLookup;
+        public ComponentLookup <BulletHealth> bulletHealthLookup;
         public LocalTransform playerTransform;
 
         public BufferLookup <InCollisionWith> inCollisionWithLookup;
@@ -77,6 +79,7 @@ public partial struct BulletCollision : ISystem
 
             var bulletDamage = GetDamage(bullet).ValueRO.damage;
             var bulletKnockback = GetKnockback(bullet).ValueRO.knockbackAmount;
+            var bulletHealth = GetBulletHealth(bullet).ValueRW.bulletHealth;
 
             inCollisionWithLookup.TryGetBuffer(bullet, out var inCollisionWith);
 
@@ -108,6 +111,7 @@ public partial struct BulletCollision : ISystem
                 {
                     flashTimer = 0
                 });
+                commandBuffer.SetComponent(bullet, new BulletHealth { bulletHealth = bulletHealth - 1 });
             }
         }
 
@@ -116,6 +120,8 @@ public partial struct BulletCollision : ISystem
         private bool IsEnemy(Entity entity) { return enemyLookup.HasComponent(entity); }
 
         private RefRO <Damage> GetDamage(Entity entity) { return damageLookup.GetRefRO(entity); }
+
+        private RefRW <BulletHealth> GetBulletHealth(Entity entity) { return bulletHealthLookup.GetRefRW(entity); }
 
         private RefRO <KnockbackData> GetKnockback(Entity entity) { return knockbackLookup.GetRefRO(entity); }
 
