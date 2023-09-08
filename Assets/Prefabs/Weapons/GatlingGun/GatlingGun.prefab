@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5001235017347817499}
   - component: {fileID: 3731655485173307121}
-  - component: {fileID: 891003823839136026}
+  - component: {fileID: -6920568582838313146}
   m_Layer: 0
-  m_Name: Glock
+  m_Name: GatlingGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03044279a8686e747b48ae794211ad36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cooldownTime: 0.5
---- !u!114 &891003823839136026
+  cooldownTime: 1
+--- !u!114 &-6920568582838313146
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -55,7 +55,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2296830723674259200}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdceadcb5cc26cd42b1ac7a9088c2ff1, type: 3}
+  m_Script: {fileID: 11500000, guid: 61c0d21ebde03e7438a37f48aa90f590, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectile: {fileID: 8692323837054728085, guid: adcee7d84fd6e1846add862a264a3669, type: 3}
+  projectile: {fileID: 8692323837054728085, guid: 94c811ef3eb4a414380ac18d658d135c, type: 3}
+  cooldownDecrease: 0.3
+  minCooldown: 0.05
+  minSpread: 0
+  maxSpread: 5

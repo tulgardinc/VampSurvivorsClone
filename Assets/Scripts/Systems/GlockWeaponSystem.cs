@@ -3,20 +3,21 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public partial struct ShootingSystem : ISystem
+public partial struct GlockWeaponSystem : ISystem
 {
 
     public void OnUpdate(ref SystemState state)
     {
+
         foreach (var (playerTransform, playerDirection, _) in SystemAPI
                          .Query<RefRO<LocalTransform>, RefRO<Direction>, RefRO<PlayerTag>>())
 
         {
-            foreach (var shooter in SystemAPI.Query<RefRW<BulletSpawner>>())
+            foreach (var (shooter, cooldown) in SystemAPI.Query<RefRW<GlockWeapon>, RefRW<Cooldown>>())
             {
-                if (shooter.ValueRO.fireTimer < SystemAPI.Time.ElapsedTime)
+                if (cooldown.ValueRO.timer <= 0)
                 {
-                    var bullet = state.EntityManager.Instantiate(shooter.ValueRO.bullet);
+                    var bullet = state.EntityManager.Instantiate(shooter.ValueRO.projectile);
 
                     var bulletPosition = playerTransform.ValueRO.Position;
 
@@ -30,7 +31,7 @@ public partial struct ShootingSystem : ISystem
                     state.EntityManager.SetComponentData(bullet, new Direction { direction = bulletDirection });
 
 
-                    shooter.ValueRW.fireTimer = (float)SystemAPI.Time.ElapsedTime + shooter.ValueRO.fireInterval;
+                    cooldown.ValueRW.timer = cooldown.ValueRO.cooldownTime;
                 }
             }
         }
