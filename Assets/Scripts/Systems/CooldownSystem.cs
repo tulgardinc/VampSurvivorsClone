@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Unity.Entities;
 using UnityEngine;
 
@@ -10,11 +9,12 @@ public partial struct CooldownSystem : ISystem
     {
         state.Dependency = new CooldownJob
         {
-            deltaTime = Time.deltaTime,
+            deltaTime = Time.deltaTime
         }.ScheduleParallel(state.Dependency);
     }
 
 
+    [StructLayout(LayoutKind.Auto)]
     public partial struct CooldownJob : IJobEntity
     {
 
@@ -27,6 +27,7 @@ public partial struct CooldownSystem : ISystem
                 cooldown.timer -= deltaTime;
             }
         }
+
     }
 
 }

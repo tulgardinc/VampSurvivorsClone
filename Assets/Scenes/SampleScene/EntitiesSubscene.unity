@@ -188,14 +188,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -6920568582838313146, guid: 836ea6243b4a33545a2d9df7d9d2555e, type: 3}
-      propertyPath: maxSpread
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: -6920568582838313146, guid: 836ea6243b4a33545a2d9df7d9d2555e, type: 3}
-      propertyPath: spreadIncrease
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2296830723674259200, guid: 836ea6243b4a33545a2d9df7d9d2555e, type: 3}
       propertyPath: m_Name
       value: GatlingGun
