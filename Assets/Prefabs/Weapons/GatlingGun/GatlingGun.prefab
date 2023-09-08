@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03044279a8686e747b48ae794211ad36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cooldownTime: 1
+  cooldown: 0.5
 --- !u!114 &-6920568582838313146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,7 +59,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectile: {fileID: 8692323837054728085, guid: 94c811ef3eb4a414380ac18d658d135c, type: 3}
-  cooldownDecrease: 0.3
-  minCooldown: 0.05
+  cooldownDecrease: 0.05
+  minCooldown: 0.12
   minSpread: 0
-  maxSpread: 5
+  maxSpread: 25
+  spreadIncrease: 1

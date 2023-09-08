@@ -61,7 +61,7 @@ MonoBehaviour:
   isEnabled: 1
   spawnRate: 0.5
   radius: 15
-  spawnAmount: 2
+  spawnAmount: 1
   enemyPrefab: {fileID: 5529849542811886228, guid: 3dd1832c54f0f0240acc6734cd0291fb, type: 3}
   nextSpawnTime: 0
   random:

@@ -12,6 +12,7 @@ public partial struct EnemySpawnSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate <LevellingData>();
         state.RequireForUpdate <EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate <PlayerTag>();
         state.RequireForUpdate <EnemySpawner>();
@@ -23,44 +24,21 @@ public partial struct EnemySpawnSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var playerTransform = SystemAPI.GetComponent <LocalTransform>(SystemAPI.GetSingletonEntity <PlayerTag>());
+        var playerLevel = SystemAPI.GetComponent <LevellingData>(SystemAPI.GetSingletonEntity <PlayerTag>());
 
         var ecbSystem = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
         var parallelEcb = ecb.AsParallelWriter();
 
-
         var spawningJob = new EnemySpawningJob
         {
             playerTransform = playerTransform.Position,
+            playerLevel = playerLevel.currentLevel,
             elapsedTime = SystemAPI.Time.ElapsedTime,
             ecb = parallelEcb
         }.ScheduleParallel(enemySpawnerQuery, state.Dependency);
 
         spawningJob.Complete();
-
-        // foreach (var (playerTransform, _) in SystemAPI.Query <RefRO <LocalTransform>, RefRO <PlayerTag>>())
-        // {
-        //     foreach (var spawner in SystemAPI.Query <RefRW <EnemySpawner>>())
-        //     {
-        //         if (!spawner.ValueRO.isEnabled)
-        //         {
-        //             return;
-        //         }
-        //
-        //         if (spawner.ValueRO.nextSpawnTime < SystemAPI.Time.ElapsedTime)
-        //         {
-        //             var enemy = state.EntityManager.Instantiate(spawner.ValueRO.enemyPrefab);
-        //
-        //             var enemyPosition = new float3(spawner.ValueRW.random.NextFloat(-1, 1),
-        //                                            spawner.ValueRW.random.NextFloat(-1, 1), 0);
-        //             var enemyDirection = math.normalize(enemyPosition) * spawner.ValueRO.radius;
-        //             state.EntityManager.SetComponentData(enemy,
-        //                                                  LocalTransform.FromPosition(playerTransform.ValueRO.Position +
-        //                                                      enemyDirection));
-        //             spawner.ValueRW.nextSpawnTime = (float)SystemAPI.Time.ElapsedTime + spawner.ValueRO.spawnRate;
-        //         }
-        //     }
-        // }
     }
 
     [StructLayout(LayoutKind.Auto)]
@@ -68,13 +46,15 @@ public partial struct EnemySpawnSystem : ISystem
     {
 
         public float3 playerTransform;
+        public float playerLevel;
         public double elapsedTime;
         public EntityCommandBuffer.ParallelWriter ecb;
-
 
         private void Execute(ref EnemySpawner enemySpawnerData,
                              [ChunkIndexInQuery] int sortKey)
         {
+            enemySpawnerData.spawnAmount = 1 + math.floor((playerLevel - 1) / 5);
+
             if (!enemySpawnerData.isEnabled)
             {
                 return;
