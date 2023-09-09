@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 8438693469654938870}
   - component: {fileID: -5788672586807710631}
   - component: {fileID: 4381688079118990249}
+  - component: {fileID: 8912320988966904100}
   m_Layer: 0
   m_Name: GlockBullet
   m_TagString: Untagged
@@ -116,6 +117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 35
+  maxSpeed: 0
 --- !u!114 &2427534012779873530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,3 +320,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalLifeTime: 5
+--- !u!114 &8912320988966904100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8692323837054728085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30e702bda7924c8ba79b879823f2a867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletHealth: 3
