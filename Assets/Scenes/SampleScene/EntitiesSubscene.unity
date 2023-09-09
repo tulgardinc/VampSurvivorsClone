@@ -188,17 +188,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -6920568582838313146, guid: 836ea6243b4a33545a2d9df7d9d2555e, type: 3}
-      propertyPath: minCooldown
-      value: 0.08
-      objectReference: {fileID: 0}
     - target: {fileID: 2296830723674259200, guid: 836ea6243b4a33545a2d9df7d9d2555e, type: 3}
       propertyPath: m_Name
       value: GatlingGun
-      objectReference: {fileID: 0}
-    - target: {fileID: 2296830723674259200, guid: 836ea6243b4a33545a2d9df7d9d2555e, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5001235017347817499, guid: 836ea6243b4a33545a2d9df7d9d2555e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -256,10 +248,6 @@ PrefabInstance:
     - target: {fileID: 2296830723674259200, guid: d4f12ef4e984891419e087e92014f940, type: 3}
       propertyPath: m_Name
       value: Glock
-      objectReference: {fileID: 0}
-    - target: {fileID: 2296830723674259200, guid: d4f12ef4e984891419e087e92014f940, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5001235017347817499, guid: d4f12ef4e984891419e087e92014f940, type: 3}
       propertyPath: m_LocalPosition.x
