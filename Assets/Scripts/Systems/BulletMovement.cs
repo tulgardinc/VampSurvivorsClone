@@ -13,8 +13,8 @@ public partial struct BulletMovement : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        query = state.GetEntityQuery(ComponentType.ReadWrite <LocalTransform>(), ComponentType.ReadOnly <Speed>(),
-                                     ComponentType.ReadOnly <Direction>(), ComponentType.ReadOnly <BulletTag>());
+        query = state.GetEntityQuery(ComponentType.ReadWrite<LocalTransform>(), ComponentType.ReadOnly<Speed>(),
+                                     ComponentType.ReadOnly<Direction>(), ComponentType.ReadOnly<LinearProjectileTag>());
     }
 
     [BurstCompile]
