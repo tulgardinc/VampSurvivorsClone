@@ -5,7 +5,6 @@ public class SpeedAuthoring : MonoBehaviour
 {
 
     public float speed;
-    public float maxSpeed;
 
 }
 

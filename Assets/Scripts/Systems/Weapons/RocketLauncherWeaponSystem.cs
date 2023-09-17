@@ -4,33 +4,37 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
 public partial struct RocketLauncherWeaponSystem : ISystem
 {
 
     public void OnEnable(ref SystemState state)
     {
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate <EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-
-        var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecbSystem = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>();
 
         foreach (var (playerTransform, playerDirection, _) in SystemAPI
-                         .Query<RefRO<LocalTransform>, RefRO<Direction>, RefRO<PlayerTag>>())
+                         .Query <RefRO <LocalTransform>, RefRO <Direction>, RefRO <PlayerTag>>())
 
         {
-            foreach (var (rocketLauncher, cooldown) in SystemAPI.Query<RefRW<RocketLauncherWeapon>, RefRW<Cooldown>>())
+            foreach (var (rocketLauncher, cooldown) in
+                     SystemAPI.Query <RefRW <RocketLauncherWeapon>, RefRW <Cooldown>>())
             {
                 if (cooldown.ValueRO.timer <= 0)
                 {
-                    var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
+                    EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged)
+                                                                      .AsParallelWriter();
 
-                    float3 mouseDirection = math.normalizesafe(new float3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
+                    float3 mouseDirection =
+                            math.normalizesafe(new float3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
                                                           Camera.main.ScreenToWorldPoint(Input.mousePosition).y,
-                                                          playerTransform.ValueRO.Position.z) - playerTransform.ValueRO.Position);
+                                                          playerTransform.ValueRO.Position.z) -
+                                               playerTransform.ValueRO.Position);
 
                     uint seed = rocketLauncher.ValueRW.random.NextUInt(0, 999);
 
@@ -51,34 +55,41 @@ public partial struct RocketLauncherWeaponSystem : ISystem
         }
     }
 
-    public partial struct RocketLauncherJob : IJobParallelFor
+    private struct RocketLauncherJob : IJobParallelFor
     {
+
         [ReadOnly] public float3 playerPos;
         [ReadOnly] public float maxAngle;
         [ReadOnly] public Entity projectile;
         [ReadOnly] public float3 mouseDirection;
         [ReadOnly] public uint seed;
 
-        public Unity.Mathematics.Random random;
+        public Random random;
         public EntityCommandBuffer.ParallelWriter ecb;
 
         public void Execute(int index)
         {
-            var rocket = ecb.Instantiate(index, projectile);
+            Entity rocket = ecb.Instantiate(index, projectile);
 
-            var random = Unity.Mathematics.Random.CreateFromIndex((uint)(seed * index));
+            var random = Random.CreateFromIndex((uint)(seed * index));
 
             float rocketRandomAngle = random.NextFloat(-maxAngle, maxAngle);
 
-            float3 rocketDirection = math.mul(quaternion.AxisAngle(new float3(0, 0, 1), math.radians(rocketRandomAngle)), mouseDirection);
+            float3 rocketDirection =
+                    math.mul(quaternion.AxisAngle(new float3(0, 0, 1), math.radians(rocketRandomAngle)),
+                             mouseDirection);
 
             float3 lookDirection = math.mul(quaternion.Euler(0, 0, 90), rocketDirection);
 
-            ecb.SetComponent(index, rocket, LocalTransform.FromPositionRotation(playerPos, quaternion.LookRotationSafe(new float3(0, 0.0f, 1.0f), lookDirection)));
+            ecb.SetComponent(index, rocket,
+                             LocalTransform.FromPositionRotation(playerPos,
+                                                                 quaternion.LookRotationSafe(new float3(0, 0.0f, 1.0f),
+                                                                     lookDirection)));
             ecb.AddComponent(index, rocket, new RocketRandomShift { randomShift = random.NextFloat(0, 359) });
             ecb.AddComponent(index, rocket, new Speed { speed = random.NextFloat(10, 15) });
             ecb.SetComponent(index, rocket, new Direction { direction = rocketDirection });
         }
+
     }
 
 }

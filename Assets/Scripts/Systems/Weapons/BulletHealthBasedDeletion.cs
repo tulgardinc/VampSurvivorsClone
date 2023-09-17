@@ -1,5 +1,8 @@
 using System.Runtime.InteropServices;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
+using Unity.Transforms;
 
 [StructLayout(LayoutKind.Auto)]
 public partial struct BulletHealthBasedDeletion : ISystem
@@ -9,21 +12,29 @@ public partial struct BulletHealthBasedDeletion : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate <ExplosionController>();
         state.RequireForUpdate <EndSimulationEntityCommandBufferSystem.Singleton>();
 
-        bulletQuery = state.GetEntityQuery(ComponentType.ReadWrite <BulletHealth>());
+        bulletQuery = state.GetEntityQuery(ComponentType.ReadWrite <BulletHealth>(),
+                                           ComponentType.ReadOnly <LocalTransform>());
     }
 
 
     public void OnUpdate(ref SystemState state)
     {
         var ecbSystem = SystemAPI.GetSingleton <EndSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
-        var parallelEcb = ecb.AsParallelWriter();
+        EntityCommandBuffer ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
+        EntityCommandBuffer.ParallelWriter parallelEcb = ecb.AsParallelWriter();
 
-        var bulletHealthBasedDeletionJob = new BulletHealthBasedDeletionJob
+        var explosionController =
+                SystemAPI.GetComponent <ExplosionController>(SystemAPI.GetSingletonEntity <ExplosionController>());
+
+        JobHandle bulletHealthBasedDeletionJob = new BulletHealthBasedDeletionJob
         {
-            ecb = parallelEcb
+            ecb = parallelEcb,
+            explodeOnImpactLookup = SystemAPI.GetComponentLookup <ExplodeOnImpact>(true),
+            explosionDataLookup = SystemAPI.GetComponentLookup <ExplosionData>(),
+            explosionController = explosionController
         }.ScheduleParallel(bulletQuery, state.Dependency);
 
         bulletHealthBasedDeletionJob.Complete();
@@ -34,15 +45,32 @@ public partial struct BulletHealthBasedDeletion : ISystem
     {
 
         public EntityCommandBuffer.ParallelWriter ecb;
+        [ReadOnly] public ComponentLookup <ExplodeOnImpact> explodeOnImpactLookup;
+        [ReadOnly] public ComponentLookup <ExplosionData> explosionDataLookup;
 
+        public ExplosionController explosionController;
 
-        private void Execute(ref BulletHealth bulletHealth, Entity entity, [ChunkIndexInQuery] int sortKey)
+        private void Execute(ref BulletHealth bulletHealth, ref LocalTransform bulletTransform, Entity bullet,
+                             [ChunkIndexInQuery] int sortKey)
         {
             if (bulletHealth.bulletHealth <= 0)
             {
-                ecb.DestroyEntity(sortKey, entity);
+                if (CanExplode(bullet))
+                {
+                    Entity explosionEntity = ecb.Instantiate(sortKey, explosionController.explosionPrefab);
+
+                    ecb.SetComponent(sortKey, explosionEntity, LocalTransform.FromPosition(bulletTransform.Position));
+                    ecb.AddComponent(sortKey, explosionEntity, Explosion.FromExplosionData(GetExplosionData(bullet)));
+                }
+
+
+                ecb.DestroyEntity(sortKey, bullet);
             }
         }
+
+        private bool CanExplode(Entity entity) { return explodeOnImpactLookup.HasComponent(entity); }
+
+        private ExplosionData GetExplosionData(Entity entity) { return explosionDataLookup[entity]; }
 
     }
 

@@ -10,13 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 5472670831929963322}
   - component: {fileID: 3551268599002298568}
+  - component: {fileID: 3930948234893508121}
   m_Layer: 0
   m_Name: Zweihander
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5472670831929963322
 Transform:
   m_ObjectHideFlags: 0
@@ -44,3 +45,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75c3bb0e8ca9fe249b8b8d16b6410e90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  radius: 4
+  sweepingAngle: 60
+  damage: 50
+  knockbackAmount: 600
+--- !u!114 &3930948234893508121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861790524994594446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03044279a8686e747b48ae794211ad36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldown: 1

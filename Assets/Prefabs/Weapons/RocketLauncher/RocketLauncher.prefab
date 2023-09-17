@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectile: {fileID: 5613310481975532190, guid: 51914afed5a66394e9e3265191851ef0, type: 3}
   rocketCount: 5
-  spreadRange: 40
+  spreadRange: 15
 --- !u!114 &-3517280087892511892
 MonoBehaviour:
   m_ObjectHideFlags: 0
